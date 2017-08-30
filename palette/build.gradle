@@ -3,12 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+    compileSdkVersion compile_sdk_version
+    buildToolsVersion "$build_tool_version"
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 25
+        minSdkVersion sdk_min_version
+        targetSdkVersion sdk_target_version
         versionCode 1
         versionName "1.0"
 
@@ -28,8 +28,10 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    testCompile 'junit:junit:4.12'
+    compile "com.android.support:appcompat-v7:$support_version"
+    compile "com.android.support:design:$support_version"
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile project(':myutils')
+    compile "org.jetbrains.anko:anko-sdk19:$anko_version"
+    compile "org.jetbrains.anko:anko-support-v4:$anko_version"
+    testCompile 'junit:junit:4.12'
 }

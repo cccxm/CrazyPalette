@@ -1,4 +1,4 @@
-package com.cxm.utils
+package com.github.cccxm.palette.util
 
 import android.util.Log
 

@@ -24,7 +24,5 @@ import com.github.cccxm.palette.controller.ControllerImpl
  *  Created by 陈小默 on 2016/12/29.
  */
 class BoardFactoryImpl : BoardFactory() {
-    override fun getController(context: Context): Controller {
-        return ControllerImpl(context)
-    }
+    override fun getController(context: Context): Controller = ControllerImpl(context)
 }

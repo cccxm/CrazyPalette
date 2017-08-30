@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanPrivate")
+
 package com.github.cccxm.palette.util
 
 import android.graphics.*
@@ -26,7 +28,7 @@ import java.util.*
  *
  *  Created by 陈小默 on 2017/1/10.
  */
-class HistoryUtil(val canvas: Canvas) {
+class HistoryUtil(private val canvas: Canvas) {
     /**
      * 用来保存历史记录的栈。
      * 用以实现撤销和回复。
@@ -103,21 +105,19 @@ class HistoryUtil(val canvas: Canvas) {
     /**
      * 当前是否有多余的操作可撤销
      */
-    fun hasUndo(): Boolean {
-        return mUndoStack.isNotEmpty()
-    }
+    fun hasUndo(): Boolean = mUndoStack.isNotEmpty()
 
     /**
      * 当前是否有多余的操作可重做
      */
     fun hasRedo(): Boolean {
-        if (mRedoStack.isNotEmpty()) {
-            return true
+        return if (mRedoStack.isNotEmpty()) {
+            true
         } else {
             if (mUndoStack.isNotEmpty()) {
-                return mUndoStack.peek().hasRedo()
+                mUndoStack.peek().hasRedo()
             } else {
-                return false
+                false
             }
         }
     }
@@ -138,19 +138,11 @@ class HistoryUtil(val canvas: Canvas) {
     }
 
     companion object {
-        @JvmStatic fun toHistory(paint: Paint, path: Path): Model {
-            val his = PathModel(paint, path)
-            return his
-        }
+        fun toHistory(paint: Paint, path: Path): Model = PathModel(paint, path)
 
-        @JvmStatic fun toHistory(paint: Paint, text: String, x: Float, y: Float): Model {
-            val his = TextModel(paint, text, x, y)
-            return his
-        }
+        fun toHistory(paint: Paint, text: String, x: Float, y: Float): Model =
+                TextModel(paint, text, x, y)
 
-        @JvmStatic fun toHistory(bitmap: Bitmap, bounds: RectF): Model {
-            val his = BitmapModel(bitmap, bounds)
-            return his
-        }
+        fun toHistory(bitmap: Bitmap, bounds: RectF): Model = BitmapModel(bitmap, bounds)
     }
 }

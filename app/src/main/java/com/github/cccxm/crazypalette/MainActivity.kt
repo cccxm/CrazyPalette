@@ -1,16 +1,14 @@
 package com.github.cccxm.crazypalette
 
+import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.view.Gravity
-import android.view.View
-import android.view.ViewGroup
+import android.support.v7.app.AppCompatActivity
+import android.view.*
 import android.widget.LinearLayout
 import android.widget.PopupWindow
-import com.cxm.mvp.BaseActivity
-import com.cxm.mvp.IPresenter
 import com.github.cccxm.palette.controller.Controller
 import com.github.cccxm.palette.controller.WordPad
 import com.github.cccxm.palette.factory.BoardFactory
@@ -21,11 +19,11 @@ import com.github.cccxm.palette.view.shape.RectShape
 import org.jetbrains.anko.*
 import java.util.*
 
-class MainActivity : BaseActivity<IPresenter>() {
+class MainActivity : AppCompatActivity() {
     companion object {
-        @JvmStatic private val GRAY1 = 0xD1.gray.opaque
-        @JvmStatic private val GRAY2 = 0x96.gray.opaque
-        @JvmStatic private val GRAY3 = 0x66.gray.opaque
+        private val GRAY1 = 0xD1.gray.opaque
+        private val GRAY2 = 0x96.gray.opaque
+        private val GRAY3 = 0x66.gray.opaque
 
         /**
          * 处理联动操作的类
@@ -53,14 +51,14 @@ class MainActivity : BaseActivity<IPresenter>() {
         /**
          * 按钮被点击的联动操作
          */
-        @JvmStatic private fun View.click(group: Group, default: Boolean = false, listener: View.() -> Unit = {}) {
+        private fun View.click(group: Group, default: Boolean = false, listener: View.() -> Unit = {}) {
             group.addView(this, default, listener)
         }
 
         /**
          * 修改当前颜色的透明度，透明度取址范围 0-0xFF
          */
-        @JvmStatic private fun buildColor(color: Int, alpha: Int): Int {
+        private fun buildColor(color: Int, alpha: Int): Int {
             var mColor = color
             mColor = mColor and 0x00FFFFFF
             val mAlpha = alpha shl 24
@@ -86,14 +84,12 @@ class MainActivity : BaseActivity<IPresenter>() {
     private var mCurrentPaintColor: Int = Color.BLACK
     private var mCurrentPaintAlpha: Int = 0xff
 
-    init {
-        orientation = BaseActivity.Orientation.LANDSCAPE
-        allowActionBar = false
-        allowFullScreen = true
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        supportActionBar?.hide()
         val factory = BoardFactory.getFactory()
         controller = factory.getController(this)
         val view = controller.getView()
@@ -118,95 +114,94 @@ class MainActivity : BaseActivity<IPresenter>() {
                 addView(view)
                 padding = dip(50)
             }
-            linearLayout {
-                //控制器面板
+            scrollView {
                 lparams {
                     width = dip(120)
                     height = matchParent
                 }
-                backgroundColor = GRAY2
-                orientation = LinearLayout.VERTICAL
-                switch(R.style.ButtonStyle) {
-                    //多点触控开关
-                    isChecked = true
-                    onCheckedChange { compoundButton, switch ->
-                        controller.multiTouch = switch
-                        toast(if (switch)
-                            "已经开启多点触控模式"
-                        else
-                            "多点触摸模式关闭，需要多指交互的操作都会失效")
-                    }
-                }
-                textView(text = "设置画笔", theme = R.style.ButtonStyle) {
-                    onClick {
-                        if (!mPaintWindow.isShowing)
-                            mPaintWindow.showAtLocation(root, Gravity.END or Gravity.TOP,
-                                    dip(120), dip(50))
-                    }
-                }
-                textView(text = "写字设置", theme = R.style.ButtonStyle) {
-                    onClick {
-                        mTextPad = controller.drawText()
-                        controller.setCommand(Controller.Command.TEXT)
-                        if (!mTextWindow.isShowing)
-                            mTextWindow.showAtLocation(root, Gravity.END or Gravity.TOP,
-                                    dip(120), dip(100))
-                    }
-                }
-                textView(text = "橡皮设置", theme = R.style.ButtonStyle) {
-                    onClick {
-                        controller.setCommand(Controller.Command.ERASER)
-                        if (!mEraserWindow.isShowing)
-                            mEraserWindow.showAtLocation(root, Gravity.END or Gravity.TOP,
-                                    dip(120), dip(150))
-                    }
-                }
-                textView(text = "撤销", theme = R.style.ButtonStyle) {
-                    onClick {
-                        controller.undo()
-                    }
-                }
-                textView(text = "重做", theme = R.style.ButtonStyle) {
-                    onClick {
-                        controller.redo()
-                    }
-                }
-                textView(text = "添加图片", theme = R.style.ButtonStyle) {
-                    //TODO
-                }
-                textView(text = "设置背景", theme = R.style.ButtonStyle) {
-                    //TODO
-                }
-                switch(R.style.ButtonStyle) {
-                    isChecked = false
-                    onCheckedChange { compoundButton, switch ->
-                        if (switch) {
-                            toast("禁用绘图")
-                            controller.setCommand(Controller.Command.DISABLE)
-                        } else {
-                            toast("启用绘图")
+                linearLayout {
+                    //控制器面板
+                    lparams(matchParent, wrapContent)
+                    backgroundColor = GRAY2
+                    orientation = LinearLayout.VERTICAL
+                    switch(R.style.ButtonStyle) {
+                        //多点触控开关
+                        isChecked = true
+                        onCheckedChange { _, switch ->
+                            controller.multiTouch = switch
+                            toast(if (switch)
+                                "已经开启多点触控模式"
+                            else
+                                "多点触摸模式关闭，需要多指交互的操作都会失效")
                         }
                     }
-                }
-                textView(text = "保存", theme = R.style.ButtonStyle) {
-                    //TODO
-                }
-                textView(text = "清屏", theme = R.style.ButtonStyle) {
-                    onClick {
-                        alert(title = "提醒", message = "是否清空画板内容") {
-                            yesButton {
-                                controller.clear()
-                            }
-                            noButton {}
-//                            positiveButton("确定") {
-//                                controller.clear()
-//                            }
-//                            negativeButton("取消")
-                        }.show()
+                    textView(text = "设置画笔", theme = R.style.ButtonStyle) {
+                        onClick {
+                            if (!mPaintWindow.isShowing)
+                                mPaintWindow.showAtLocation(root, Gravity.END or Gravity.TOP,
+                                        dip(120), dip(50))
+                        }
                     }
-                }
-                textView(text = "爆炸", theme = R.style.ButtonStyle) {
-                    onClick { controller.setCommand(Controller.Command.EXPLODE) }
+                    textView(text = "写字设置", theme = R.style.ButtonStyle) {
+                        onClick {
+                            mTextPad = controller.drawText()
+                            controller.setCommand(Controller.Command.TEXT)
+                            if (!mTextWindow.isShowing)
+                                mTextWindow.showAtLocation(root, Gravity.END or Gravity.TOP,
+                                        dip(120), dip(100))
+                        }
+                    }
+                    textView(text = "橡皮设置", theme = R.style.ButtonStyle) {
+                        onClick {
+                            controller.setCommand(Controller.Command.ERASER)
+                            if (!mEraserWindow.isShowing)
+                                mEraserWindow.showAtLocation(root, Gravity.END or Gravity.TOP,
+                                        dip(120), dip(150))
+                        }
+                    }
+                    textView(text = "撤销", theme = R.style.ButtonStyle) {
+                        onClick {
+                            controller.undo()
+                        }
+                    }
+                    textView(text = "重做", theme = R.style.ButtonStyle) {
+                        onClick {
+                            controller.redo()
+                        }
+                    }
+                    textView(text = "添加图片", theme = R.style.ButtonStyle) {
+                        //TODO
+                    }
+                    textView(text = "设置背景", theme = R.style.ButtonStyle) {
+                        //TODO
+                    }
+                    switch(R.style.ButtonStyle) {
+                        isChecked = false
+                        onCheckedChange { _, switch ->
+                            if (switch) {
+                                toast("禁用绘图")
+                                controller.setCommand(Controller.Command.DISABLE)
+                            } else {
+                                toast("启用绘图")
+                            }
+                        }
+                    }
+                    textView(text = "保存", theme = R.style.ButtonStyle) {
+                        //TODO
+                    }
+                    textView(text = "清屏", theme = R.style.ButtonStyle) {
+                        onClick {
+                            alert(title = "提醒", message = "是否清空画板内容") {
+                                yesButton {
+                                    controller.clear()
+                                }
+                                noButton {}
+                            }.show()
+                        }
+                    }
+                    textView(text = "爆炸", theme = R.style.ButtonStyle) {
+                        onClick { controller.setCommand(Controller.Command.EXPLODE) }
+                    }
                 }
             }
         }
@@ -240,6 +235,11 @@ class MainActivity : BaseActivity<IPresenter>() {
         }
         mEraserWindow = createWindow(settingsLayout)
     }
+
+    /**
+     * 当前Activity的根布局
+     */
+    val root: View get() = (findViewById(android.R.id.content) as ViewGroup).getChildAt(0)
 
     /**
      * 初始化写字板设置窗口

@@ -24,9 +24,7 @@ import com.github.cccxm.palette.controller.Controller
  */
 abstract class BoardFactory {
     companion object {
-        @JvmStatic fun getFactory(): BoardFactory {
-            return BoardFactoryImpl()
-        }
+        fun getFactory(): BoardFactory = BoardFactoryImpl()
     }
 
     /**

@@ -24,7 +24,7 @@ import android.graphics.Bitmap
  *  图片格式工具类
  */
 object FormatUtil {
-    @JvmStatic private val sConfigs = arrayOf(null,
+    private val sConfigs = arrayOf(null,
             Bitmap.Config.ALPHA_8,
             null,
             Bitmap.Config.RGB_565,
@@ -34,5 +34,5 @@ object FormatUtil {
     /**
      * 根据索引获取一张图片的格式对象
      */
-    @JvmStatic fun getConfig(index: Int): Bitmap.Config? = sConfigs[index]
+    fun getConfig(index: Int): Bitmap.Config? = sConfigs[index]
 }

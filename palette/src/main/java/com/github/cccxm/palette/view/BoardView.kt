@@ -8,7 +8,7 @@ import android.graphics.Path
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import com.cxm.utils.Logger
+import com.github.cccxm.palette.util.Logger
 import com.github.cccxm.palette.controller.Controller
 import com.github.cccxm.palette.util.CanvasUtil
 import com.github.cccxm.palette.util.FormatUtil

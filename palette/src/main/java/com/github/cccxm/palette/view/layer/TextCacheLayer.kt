@@ -60,6 +60,11 @@ class TextCacheLayer(val view: View,
      */
     private var preBounds = Bounds(0, 0)
 
+    /**
+     * 某些Android版本上无法正常正常使用PopupWindow的该状态
+     */
+    private var isShowing = false
+
     val mEditView = EditText(view.context).apply {
         addTextChangedListener(this@TextCacheLayer)
         gravity = Gravity.TOP
@@ -77,8 +82,10 @@ class TextCacheLayer(val view: View,
      */
     override fun onDestroy() {
         super.onDestroy()
-        if (mWindow.isShowing)
+        if (isShowing){
             mWindow.dismiss()
+            isShowing = false
+        }
     }
 
     /**
@@ -86,7 +93,7 @@ class TextCacheLayer(val view: View,
      */
     override fun onTouchEvent(event: MotionEvent) {
         if (event.action == MotionEvent.ACTION_DOWN) {
-            if (mWindow.isShowing) {
+            if (isShowing) {
                 dismissTextWindow()
             } else {
                 startX = event.x
@@ -118,6 +125,7 @@ class TextCacheLayer(val view: View,
             mEditView.width = width
             mEditView.height = height
             mWindow.showAtLocation(view, Gravity.NO_GRAVITY, rawX.toInt(), rawY.toInt())
+            isShowing = true
         }
     }
 
@@ -130,6 +138,7 @@ class TextCacheLayer(val view: View,
         mEditView.width = width
         mEditView.height = height
         mWindow.showAtLocation(view, Gravity.NO_GRAVITY, rawX.toInt(), rawY.toInt())
+        isShowing = true
     }
 
     /**
@@ -139,6 +148,7 @@ class TextCacheLayer(val view: View,
         drawText(CanvasUtil.paintCopy(paint), mEditView.text.toString(), startX, startY)
         mEditView.setText("")
         mWindow.dismiss()
+        isShowing = false
     }
 
     /**
@@ -151,9 +161,7 @@ class TextCacheLayer(val view: View,
     }
 
     private data class Bounds(val width: Int, val height: Int) {
-        fun isChange(bounds: Bounds): Boolean {
-            return this != bounds
-        }
+        fun isChange(bounds: Bounds): Boolean = this != bounds
     }
 
     /**

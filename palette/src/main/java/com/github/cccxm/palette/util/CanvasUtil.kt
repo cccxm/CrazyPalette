@@ -25,21 +25,21 @@ object CanvasUtil {
     /**
      * 用于清空画板的画笔
      */
-    @JvmStatic private val CLEAR_PAINT = Paint().apply {
+    private val CLEAR_PAINT = Paint().apply {
         this.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
     }
 
     /**
      * 清空画布上的所有内容
      */
-    @JvmStatic fun clear(canvas: Canvas) {
+    fun clear(canvas: Canvas) {
         canvas.drawPaint(CLEAR_PAINT)
     }
 
     /**
      * 复制一个画笔对象，其中的属性完全复制于paint对象
      */
-    @JvmStatic fun paintCopy(paint: Paint): Paint {
+    fun paintCopy(paint: Paint): Paint {
         val mPaint = Paint()
         mPaint.set(paint)
         return mPaint
@@ -48,7 +48,7 @@ object CanvasUtil {
     /**
      * 复制一个路径对象
      */
-    @JvmStatic fun pathCopy(path: Path): Path {
+    fun pathCopy(path: Path): Path {
         val mPath = Path()
         mPath.set(path)
         return mPath

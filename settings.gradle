@@ -1,1 +1,1 @@
-include ':app', ':myutils', ':palette'
+include ':app', ':palette'

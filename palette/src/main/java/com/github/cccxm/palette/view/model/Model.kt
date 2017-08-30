@@ -26,7 +26,7 @@ import java.lang.Math.cos
  */
 abstract class Model {
     companion object {
-        @JvmStatic var explode = false
+        var explode = false
     }
 
     private val mFramePaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG).apply {
@@ -100,16 +100,13 @@ abstract class Model {
     /**
      * 扩展函数：判断当前点坐标是否落在RectF区域内
      */
-    private fun RectF.inner(x: Float, y: Float): Boolean {
-        return x > left && x < right && y > top && y < bottom
-    }
+    private fun RectF.inner(x: Float, y: Float): Boolean =
+            x > left && x < right && y > top && y < bottom
 
     /**
      * 判断坐标是否落在自身的RectF内
      */
-    fun dispatcher(x: Float, y: Float): Boolean {
-        return frameBounds.inner(x, y)
-    }
+    fun dispatcher(x: Float, y: Float): Boolean = frameBounds.inner(x, y)
 
     fun hasUndo(): Boolean = mUndoStack.size > 1
 

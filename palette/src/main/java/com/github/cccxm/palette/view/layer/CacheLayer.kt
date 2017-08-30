@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.view.MotionEvent
-import com.cxm.utils.Logger
+import com.github.cccxm.palette.util.Logger
 import com.github.cccxm.palette.util.CanvasUtil
 import com.github.cccxm.palette.view.model.Model
 
@@ -37,7 +37,7 @@ abstract class CacheLayer(val format: Bitmap.Config?,
     /**
      * 绘图层缓冲区对象
      */
-    val cacheBitmap = Bitmap.createBitmap(width, height, format)
+    val cacheBitmap: Bitmap = Bitmap.createBitmap(width, height, format)
 
     /**
      * 是否开启多点触摸

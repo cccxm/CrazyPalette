@@ -30,7 +30,6 @@ class ShapeWrapper : Shape() {
             shape!!.isFull = value
         }
 
-    override fun getShape(x: Float, y: Float, endX: Float, endY: Float): Path {
-        return shape!!.getShape(x, y, endX, endY)
-    }
+    override fun getShape(x: Float, y: Float, endX: Float, endY: Float): Path =
+            shape!!.getShape(x, y, endX, endY)
 }
